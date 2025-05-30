@@ -184,43 +184,82 @@ def get_proactive_suggestions(message):
 # NEW VOICE SEARCH ENDPOINT (Converted from FastAPI)
 @app.route('/api/py/search', methods=['POST'])
 def voice_search():
-    """Voice search endpoint - converted from FastAPI to Flask"""
+    """Voice search endpoint with multilingual support"""
     try:
         data = request.json
         input_text = data.get('text', '')
+        language = data.get('language', 'english')  # Get language from request
         
+        print(f"Voice search - Input: {input_text}, Language: {language}")
+        
+        # Language-specific instructions
+        language_instructions = {
+            'hindi': "Please respond in Hindi using Devanagari script. Be clear and helpful. ",
+            'bengali': "Please respond in Bengali using Bengali script. Be clear and helpful. ",
+            'tamil': "Please respond in Tamil using Tamil script. Be clear and helpful. ",
+            'marathi': "Please respond in Marathi using Devanagari script. Be clear and helpful. ",
+            'telugu': "Please respond in Telugu using Telugu script. Be clear and helpful. ",
+            'kannada': "Please respond in Kannada using Kannada script. Be clear and helpful. ",
+            'gujarati': "Please respond in Gujarati using Gujarati script. Be clear and helpful. ",
+            'malayalam': "Please respond in Malayalam using Malayalam script. Be clear and helpful. ",
+            'english': "Please respond in English. Be clear and helpful. "
+        }
+        
+        language_instruction = language_instructions.get(language.lower(), language_instructions['english'])
+        
+        # Check for real-time keywords
         realtime_keywords = ["today", "current", "latest", "now", "rate", "price", "update", "news"]
         
         if any(word in input_text.lower() for word in realtime_keywords):
             web_snippet = search_web(input_text)
             prompt = (
-                "You are Finstra, a financial strategist. Use the following real-time web result to answer the user's question:\n\n"
+                f"{SYSTEM_PROMPT}\n\n"
+                f"{language_instruction}"
+                f"Use the following real-time web result to answer the user's question:\n\n"
                 f"Web Search Result:\n{web_snippet}\n\n"
                 f"User Question:\n{input_text}\n\n"
-                "Reply in the same language and be clear and strategic."
+                "Provide a comprehensive financial advice response."
             )
-            try:
-                model = genai.GenerativeModel('gemini-2.0-flash')
-                response = model.generate_content(prompt)
-                return jsonify({"response": response.text})
-            except Exception as e:
-                return jsonify({"response": f"Gemini API error: {str(e)}"})
-        
+        else:
+            prompt = (
+                f"{SYSTEM_PROMPT}\n\n"
+                f"{language_instruction}"
+                f"User Question: {input_text}\n\n"
+                "Provide comprehensive financial advice."
+            )
+
         try:
             model = genai.GenerativeModel('gemini-2.0-flash')
-            prompt = (
-                f"You are Finstra, a multilingual financial strategist. Respond in the same language and be clear, relevant and strategic: {input_text}"
-            )
             response = model.generate_content(prompt)
-            if response.text:
-                return jsonify({"response": response.text})
-            else:
-                return jsonify({"response": "Sorry, Gemini did not return a valid response."})
-        except Exception as e:
-            return jsonify({"response": f"Error from Gemini API: {str(e)}"})
             
+            if response.text:
+                return jsonify({
+                    "response": response.text,
+                    "language": language,
+                    "status": "success"
+                })
+            else:
+                return jsonify({
+                    "response": "Sorry, I couldn't generate a response. Please try again.",
+                    "language": language,
+                    "status": "error"
+                })
+                
+        except Exception as e:
+            print(f"Gemini API error: {str(e)}")
+            return jsonify({
+                "response": f"I'm having trouble processing your request. Error: {str(e)}",
+                "language": language,
+                "status": "error"
+            })
+
     except Exception as e:
-        return jsonify({"response": f"Error processing voice search: {str(e)}"})
+        print(f"Voice search error: {str(e)}")
+        return jsonify({
+            "response": f"Error processing voice search: {str(e)}",
+            "language": "english",
+            "status": "error"
+        })
 
 # EXISTING CHATBOT ENDPOINT
 @app.route('/api/py/chat', methods=['POST'])

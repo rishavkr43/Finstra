@@ -24,13 +24,14 @@ interface InputBoxProps {
     chatInput: string,
     // setChatInput: (input: string) => void
     setChatInput: React.Dispatch<React.SetStateAction<string>>
+    selectedLanguage: string
 }
 
 // type SpeechRecognitionType = any;
 
 const baseUrl = 'https://finstra-production.up.railway.app/';
 
-const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chatInput, setChatInput }) => {
+const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage }) => {
     // const [isListening, setIsListening] = useState(false);
 
     // Voice recognition setup
@@ -132,7 +133,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
             const previousMessages = chatMessages.slice(-5);
             const res: AxiosResponse = await axios.post(`${baseUrl}/api/py/chat`, {
                 message: chatInput,
-                language: "english",
+                language: selectedLanguage,
                 chat_history: [...previousMessages, userMessage]
             });
 
@@ -159,6 +160,17 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
         
     };
 
+    const getPlaceholderText = () => {
+        switch (selectedLanguage) {
+            case 'hindi':
+                return "अपना संदेश यहाँ लिखें...";
+            case 'bengali':
+                return "আপনার বার্তা এখানে টাইপ করুন...";
+            default:
+                return "Type your message here...";
+        }
+    };
+
     return (
         <>
             <div className="flex gap-2 border p-4 rounded-full shadow-md max-w-[82vw] mx-auto mt-4 bg-white">
@@ -167,7 +179,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder="Type your message here..."
+                    placeholder={getPlaceholderText()}
                 />
                 {/* <Button
                     onClick={isListening ? stopListening : startListening}
