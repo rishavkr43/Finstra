@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import axios, { AxiosResponse } from 'axios'
 import { HandCoins, Plus } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
-import Markdown from 'react-markdown'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
 const baseUrl = 'https://finstra-production.up.railway.app/';
@@ -97,6 +96,16 @@ const Page: React.FC = () => {
     setSelectedLanguage(language);
   };
 
+  // Function to format message text with proper line breaks
+  const formatMessage = (message: string) => {
+    return message.split('\n').map((line, i) => (
+      <Fragment key={i}>
+        {line}
+        {i < message.split('\n').length - 1 && <br />}
+      </Fragment>
+    ));
+  };
+
   return (
     <>
       <ScrollArea>
@@ -141,7 +150,7 @@ const Page: React.FC = () => {
                 <div className='flex flex-col gap-2'>
                   <div className={`md:text-md text-sm shadow-md flex flex-col gap-y-2 max-w-[60vw] min-w-[20vw] px-6 py-4 rounded-xl ${msg.sender === "user" ? "bg-green-700 rounded-tr-none text-background" : "bg-slate-200 rounded-tl-none text-foreground"}`}>
                     <h2 className='font-bold'>{msg.sender === "user" ? 'You' : "Finstra AI"}</h2>
-                    <Markdown>{msg.message}</Markdown>
+                    <div className="whitespace-pre-wrap">{formatMessage(msg.message)}</div>
 
                     {/* Scam Alert */}
                     {msg.scam_detected && (

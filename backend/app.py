@@ -53,6 +53,10 @@ Format your responses clearly with:
 
 Be encouraging and kind. Avoid jargon. Use examples from farming, livestock, or village shops.
 Keep paragraphs short and use line breaks between sections for better readability.
+IMPORTANT: When responding in Hindi, you MUST use Devanagari script (हिंदी) for the entire response and when When responding in Bengali, you MUST use Bengali script for the entire response.
+IMPORTANT: 
+- Use double newlines (\\n\\n) for paragraph breaks instead of <br> tags.
+
 """
 
 # Scam detection patterns
@@ -181,6 +185,22 @@ def get_proactive_suggestions(message):
         return 'insurance'
     return None
 
+def clean_response(text):
+    """Clean the response text by removing HTML tags and fixing formatting"""
+    # Replace <br> and <br/> tags with double newlines
+    text = re.sub(r'<br\s*/?>|<BR\s*/?>', '\n\n', text)
+    
+    # Replace other HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # Fix multiple consecutive newlines (more than 2) to just 2
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    
+    # Ensure proper spacing after bullet points and numbers
+    text = re.sub(r'(•|\d+\.)\s*', r'\1 ', text)
+    
+    return text.strip()
+
 # NEW VOICE SEARCH ENDPOINT (Converted from FastAPI)
 @app.route('/api/py/search', methods=['POST'])
 def voice_search():
@@ -194,15 +214,15 @@ def voice_search():
         
         # Language-specific instructions
         language_instructions = {
-            'hindi': "Please respond in Hindi using Devanagari script. Be clear and helpful. ",
-            'bengali': "Please respond in Bengali using Bengali script. Be clear and helpful. ",
-            'tamil': "Please respond in Tamil using Tamil script. Be clear and helpful. ",
-            'marathi': "Please respond in Marathi using Devanagari script. Be clear and helpful. ",
-            'telugu': "Please respond in Telugu using Telugu script. Be clear and helpful. ",
-            'kannada': "Please respond in Kannada using Kannada script. Be clear and helpful. ",
-            'gujarati': "Please respond in Gujarati using Gujarati script. Be clear and helpful. ",
-            'malayalam': "Please respond in Malayalam using Malayalam script. Be clear and helpful. ",
-            'english': "Please respond in English. Be clear and helpful. "
+            'hindi': "Please respond in Hindi using Devanagari script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'bengali': "Please respond in Bengali using Bengali script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'tamil': "Please respond in Tamil using Tamil script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'marathi': "Please respond in Marathi using Devanagari script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'telugu': "Please respond in Telugu using Telugu script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'kannada': "Please respond in Kannada using Kannada script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'gujarati': "Please respond in Gujarati using Gujarati script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'malayalam': "Please respond in Malayalam using Malayalam script. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks.",
+            'english': "Please respond in English. Be clear and helpful. Use double newlines (\\n\\n) for paragraph breaks."
         }
         
         language_instruction = language_instructions.get(language.lower(), language_instructions['english'])
@@ -233,8 +253,9 @@ def voice_search():
             response = model.generate_content(prompt)
             
             if response.text:
+                cleaned_text = clean_response(response.text)
                 return jsonify({
-                    "response": response.text,
+                    "response": cleaned_text,
                     "language": language,
                     "status": "success"
                 })
@@ -247,16 +268,18 @@ def voice_search():
                 
         except Exception as e:
             print(f"Gemini API error: {str(e)}")
+            error_message = "I'm having trouble processing your request. Please try again."
             return jsonify({
-                "response": f"I'm having trouble processing your request. Error: {str(e)}",
+                "response": clean_response(error_message),
                 "language": language,
                 "status": "error"
             })
 
     except Exception as e:
         print(f"Voice search error: {str(e)}")
+        error_message = f"Error processing voice search: {str(e)}"
         return jsonify({
-            "response": f"Error processing voice search: {str(e)}",
+            "response": clean_response(error_message),
             "language": "english",
             "status": "error"
         })
@@ -291,7 +314,7 @@ If someone is pressuring you for money or personal information, please contact y
 Now, how can I help you with legitimate financial advice?
 """
             return jsonify({
-                'response': scam_warning,
+                'response': clean_response(scam_warning),
                 'scam_detected': True,
                 'status': 'success'
             })
@@ -320,9 +343,9 @@ Now, how can I help you with legitimate financial advice?
         # Prepare the prompt with language instruction and context
         language_instruction = ""
         if language.lower() == 'hindi':
-            language_instruction = "Please respond in Hindi using Devanagari script. Format the response clearly with sections and bullet points. "
+            language_instruction = "Please respond in Hindi using Devanagari script. Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
         elif language.lower() == 'bengali':
-            language_instruction = "Please respond in Bengali. Format the response clearly with sections and bullet points. "
+            language_instruction = "Please respond in Bengali. Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
         
         full_prompt = f"{SYSTEM_PROMPT}\n\nConversation History:\n{conversation_context}\n\nUser: {user_message}\n\n{language_instruction}Assistant: "
         
@@ -336,11 +359,20 @@ Now, how can I help you with legitimate financial advice?
                 response = model.generate_content(full_prompt)
                 print(f"Received response from Gemini API: {response.text}")
                 
-                return jsonify({
-                    'response': response.text,
-                    'suggestions': suggestions,
-                    'status': 'success'
-                })
+                if response.text:
+                    cleaned_text = clean_response(response.text)
+                    return jsonify({
+                        'response': cleaned_text,
+                        'suggestions': suggestions,
+                        'status': 'success'
+                    })
+                else:
+                    error_message = "Sorry, I couldn't generate a response. Please try again."
+                    return jsonify({
+                        'response': clean_response(error_message),
+                        'language': language,
+                        'status': 'error'
+                    })
                 
             except Exception as retry_error:
                 if '429' in str(retry_error) and retry_count < max_retries - 1:
@@ -356,13 +388,14 @@ Now, how can I help you with legitimate financial advice?
         print(f"Traceback: {error_traceback}")
         
         if '429' in str(e):
+            error_message = 'Rate limit exceeded. Please try again in a minute.'
             return jsonify({
-                'error': 'Rate limit exceeded. Please try again in a minute.',
+                'error': clean_response(error_message),
                 'status': 'error'
             }), 429
         else:
             return jsonify({
-                'error': str(e),
+                'error': clean_response(str(e)),
                 'traceback': error_traceback,
                 'status': 'error'
             }), 500

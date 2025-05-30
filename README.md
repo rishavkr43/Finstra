@@ -1,134 +1,172 @@
-# Finstra - AI Financial Advisor
+# Finstra - Financial Empowerment for Rural Communities
 
-Finstra is an AI-powered financial advisor that provides personalized financial guidance using the Gemini API. It supports multiple languages including English, Hindi, and Bengali.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://finstra.vercel.app/)
 
-## Prerequisites
+## Overview
 
-- Python 3.13 or higher
-- A Google Cloud account with access to the Gemini API
-- An active Gemini API key
-
-## Setup Instructions
-
-1. **Clone the Repository**
-   ```bash
-   git clone "repo link"
-   cd Finstra
-   ```
-
-2. **Create and Activate Virtual Environment**
-   
-   Virtual environments (venv) are used to create an isolated environment for your project. This prevents conflicts between package versions across different projects and ensures consistent dependencies.
-
-   For Windows:
-   ```cmd
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-
-   For Linux/Mac:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-   After activation, your prompt should change to show `(venv)` at the beginning.
-
-3. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Environment Setup**
-   - Create a `.env` file in the root directory (or copy from .env.example)
-   - Add your Gemini API key:
-     ```
-     GEMINI_API_KEY=your_api_key_here
-     ```
-
-## Running the Application
-
-1. **Start the Backend Server**
-   - Open a terminal/command prompt
-   - Ensure your virtual environment is activated (you should see `(venv)` in your prompt)
-   - Navigate to the backend directory:
-     ```bash
-     cd backend
-     ```
-   - Run the Flask server:
-     ```bash
-     python app.py
-     ```
-   - The backend will start on `http://localhost:5000`
-
-2. **Start the Frontend Server**
-   - Open a new terminal/command prompt
-   - Activate the virtual environment in this terminal too
-   - Navigate to the frontend_cb directory:
-     ```bash
-     cd frontend_cb
-     ```
-   - Start the Python HTTP server:
-     ```bash
-     python -m http.server 8000
-     ```
-   - The frontend will be available at `http://localhost:8000`
-
-3. **Access the Application**
-   - Open your web browser
-   - Go to `http://localhost:8000`
-   - The chat interface should now be available
-
-## Note for Windows Users
-
-If using specific Python installation paths, use these commands:
-
-1. **Backend:**
-   ```cmd
-   cd backend
-   "C:\Users\Dell\AppData\Local\Programs\Python\Python313\python.exe" app.py
-   ```
-
-2. **Frontend:**
-   ```cmd
-   cd frontend_cb
-   "C:\Users\Dell\AppData\Local\Programs\Python\Python313\python.exe" -m http.server 8000
-   ```
+Finstra is a comprehensive financial advisory platform designed specifically for rural communities, particularly farmers. It combines modern technology with simplified financial guidance to make financial services more accessible and understandable.
 
 ## Features
 
-- Multi-language support (English, Hindi, Bengali)
-- Real-time financial advice
-- User-friendly chat interface
-- Rural-focused financial guidance
-- Secure API integration
+### 1. Multilingual Voice Assistant
+- Voice-based interaction in multiple Indian languages
+- Supported languages:
+  - English
+  - Hindi (हिंदी)
+  - Bengali (বাংলা)
+  - Tamil (தமிழ்)
+  - Telugu (తెలుగు)
+  - Kannada (ಕನ್ನಡ)
+  - Gujarati (ગુજરાતી)
+  - Malayalam (മലയാളം)
+  - Marathi (मराठी)
 
-## Troubleshooting
+### 2. Financial Topics Coverage
+- Kissan Credit Card (KCC) guidance
+- Interest rate explanations
+- Crop Insurance (PMFBY) details
+- Loan vs Grant comparisons
+- Financial scam prevention
+- Government schemes information
 
-1. **Virtual Environment Issues**
-   - Make sure you see `(venv)` in your terminal prompt
-   - If not, activate the virtual environment again
-   - If packages are not found, ensure you're using the correct Python interpreter
+### 3. Interactive Features
+- Text-based chatbot
+- Voice-based interactions
+- Language selection options
+- Real-time responses
+- Contextual suggestions
 
-2. **Backend Issues**
-   - Ensure your Gemini API key is correctly set in the `.env` file
-   - Check if Flask server is running on port 5000
-   - Look for error messages in the backend terminal
+### 4. Security Features
+- Scam detection and alerts
+- Safe banking practices guidance
+- Fraud prevention tips
 
-3. **Frontend Issues**
-   - Make sure the Python HTTP server is running on port 8000
-   - Clear browser cache if UI changes aren't visible
-   - Check browser console for any JavaScript errors
+## Technology Stack
 
-4. **API Rate Limits**
-   - The application includes retry mechanisms for API rate limits
-   - If you encounter persistent 429 errors, wait a few minutes before retrying
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- Web Speech API for voice interactions
 
-## Support
+### Backend
+- Python
+- Flask
+- Google Gemini AI
+- SerpAPI for real-time data
 
-For any issues or questions, please:
-1. Check the troubleshooting section
-2. Review the error messages in your terminal
-3. Ensure all prerequisites are met
-4. Verify your API key is active and correctly configured
-5. Make sure your virtual environment is properly activated
+### Deployment
+- Frontend: Vercel
+- Backend: Railway
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/finstra.git
+```
+
+2. Install frontend dependencies:
+```bash
+cd client
+npm install
+```
+
+3. Install backend dependencies:
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+4. Set up environment variables:
+
+Frontend (.env):
+```
+NEXT_PUBLIC_API_URL=your_backend_url
+```
+
+Backend (.env):
+```
+GEMINI_API_KEY=your_gemini_api_key
+SERPAPI_API_KEY=your_serpapi_key
+PORT=5000
+```
+
+5. Run the development servers:
+
+Frontend:
+```bash
+npm run dev
+```
+
+Backend:
+```bash
+python app.py
+```
+
+## Requirements
+
+### Frontend Dependencies
+```json
+{
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.0",
+    "@radix-ui/react-select": "^2.0.0",
+    "lucide-react": "^0.300.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.1.0"
+  }
+}
+```
+
+### Backend Dependencies
+```
+flask==3.0.0
+flask-cors==4.0.0
+google-generativeai==0.3.0
+python-dotenv==1.0.0
+serpapi==0.1.0
+```
+
+## Usage
+
+1. Visit the landing page
+2. Select your preferred language
+3. Choose between text chat or voice interaction
+4. Ask questions about:
+   - Financial schemes
+   - Banking procedures
+   - Government programs
+   - Fraud prevention
+   - Investment advice
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Google Gemini AI for natural language processing
+- SerpAPI for real-time data fetching
+- Web Speech API for voice interactions
+- All contributors and supporters of the project
+
+## Contact
+
+Project Link: [https://finstra.vercel.app/](https://finstra.vercel.app/)
+
+---
+
+Made with a great zeal for Rural Financial Empowerment.
