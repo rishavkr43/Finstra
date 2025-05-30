@@ -224,14 +224,15 @@ const Page: React.FC = () => {
         chatInput={chatInput}
         setChatInput={setChatInput}
         selectedLanguage={selectedLanguage}
+        handleLanguageChange={handleLanguageChange}
       />
-      <div className="flex flex-col items-end px-4 mt-2">
-        <div className="mb-2">
+        {/* <div className="mb-2">
           <LanguageSelector
             selectedLanguage={selectedLanguage}
             onLanguageChange={handleLanguageChange}
           />
-        </div>
+        </div> */}
+      <div className="flex flex-col items-end px-4 mt-2">
         <div className="md:text-[10px] text-[6px] text-muted-foreground text-center select-none w-full">
           <span className="text-red-500">Note: </span>
           AI responses are generated based on the input provided and may not always be accurate.
