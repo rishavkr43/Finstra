@@ -8,6 +8,7 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { Send } from 'lucide-react'
 import axios, { AxiosResponse } from 'axios';
+import LanguageSelector from '../LanguageSelector/LanguageSelector';
 
 interface MessageType {
     sender: string
@@ -24,14 +25,16 @@ interface InputBoxProps {
     chatInput: string,
     // setChatInput: (input: string) => void
     setChatInput: React.Dispatch<React.SetStateAction<string>>
-    selectedLanguage: string
+    selectedLanguage: string,
+    handleLanguageChange: (language: string) => void
 }
 
 // type SpeechRecognitionType = any;
 
 const baseUrl = 'https://finstra-production.up.railway.app/';
 
-const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage }) => {
+const InputBox: React.FC<InputBoxProps> = ({ 
+    chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage, handleLanguageChange }) => {
     // const [isListening, setIsListening] = useState(false);
 
     // Voice recognition setup
@@ -58,7 +61,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
     //             .map((result: any) => result[0])
     //             .map(result => result.transcript)
     //             .join('');
-            
+
     //         setChatInput(transcript);
     //     };
 
@@ -82,7 +85,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
     // const handleVoiceSearch = async (text: string) => {
     //     try {
     //         const response = await axios.post('http://127.0.0.1:5000/search', { text });
-            
+
     //         // Create bot message with response
     //         const botMessage: MessageType = {
     //             sender: "bot",
@@ -121,7 +124,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
 
         // Add user message
         setChatMessages((prev) => [...prev, userMessage]);
-        
+
         // If the message came from voice input, use voice search endpoint
         // if (isListening) {
         //     // await handleVoiceSearch(chatInput);
@@ -157,7 +160,7 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
                 }
             ]);
         }
-        
+
     };
 
     const getPlaceholderText = () => {
@@ -188,12 +191,20 @@ const InputBox: React.FC<InputBoxProps> = ({ chatMessages, setChatMessages, chat
                 >
                     {isListening ? <MicOff /> : <Mic />}
                 </Button> */}
-                <Button
-                    onClick={sendMessage}
-                    className="bg-green-700 hover:bg-green-600 text-white py-6 rounded-full"
-                >
-                    <Send />
-                </Button>
+                <div className='flex justify-center gap-x-4 items-end'>
+                    <div className="mb-2">
+                        <LanguageSelector
+                            selectedLanguage={selectedLanguage}
+                            onLanguageChange={handleLanguageChange}
+                        />
+                    </div>
+                    <Button
+                        onClick={sendMessage}
+                        className="bg-green-700 hover:bg-green-600 text-white py-6 px-4 rounded-full"
+                    >
+                        <Send />
+                    </Button>
+                </div>
             </div>
         </>
     )
