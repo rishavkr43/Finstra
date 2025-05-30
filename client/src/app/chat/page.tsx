@@ -7,6 +7,7 @@ import axios, { AxiosResponse } from 'axios'
 import { HandCoins, Plus } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
+import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
 const baseUrl = 'https://finstra-production.up.railway.app/';
 
@@ -35,12 +36,14 @@ const Page: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<MessageType[]>(() => [...chat]);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([])
   const [chatInput, setChatInput] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("english");
+
   useEffect(() => {
     (async () => {
       const res: AxiosResponse = await axios.get(`${baseUrl}/api/py/common-questions`)
-      setSuggestedQuestions(res.data.english)
+      setSuggestedQuestions(res.data[selectedLanguage])
     })()
-  }, [])
+  }, [selectedLanguage])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -89,6 +92,10 @@ const Page: React.FC = () => {
   //   //   setIsLoading(false);
   //   // }
   // };
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language);
+  };
 
   return (
     <>
@@ -207,10 +214,19 @@ const Page: React.FC = () => {
         setChatMessages={setChatMessages}
         chatInput={chatInput}
         setChatInput={setChatInput}
+        selectedLanguage={selectedLanguage}
       />
-      <div className="mt-2 md:text-[10px] text-[6px] text-muted-foreground text-center select-none">
-        <span className="text-red-500">Note: </span>
-        AI responses are generated based on the input provided and may not always be accurate.
+      <div className="flex flex-col items-end px-4 mt-2">
+        <div className="mb-2">
+          <LanguageSelector
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={handleLanguageChange}
+          />
+        </div>
+        <div className="md:text-[10px] text-[6px] text-muted-foreground text-center select-none w-full">
+          <span className="text-red-500">Note: </span>
+          AI responses are generated based on the input provided and may not always be accurate.
+        </div>
       </div>
     </>
   )

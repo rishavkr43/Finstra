@@ -46,3 +46,74 @@
     height: 50vh;
   }
 }
+
+/* Language selector styling */
+.language-selector {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.language-selector label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+
+.language-selector select {
+  padding: 8px 12px;
+  border: 2px solid #007bff;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Button styling improvements */
+#start-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+}
+
+#start-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+#start-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Instructions styling */
+.instructions {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #007bff;
+}
+
+.instructions h3 {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.instructions ul {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.instructions li {
+  margin-bottom: 8px;
+  color: #555;
+}
