@@ -8,7 +8,7 @@ import { HandCoins, Plus } from 'lucide-react'
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
-const baseUrl = 'https://finstra-production.up.railway.app/';
+const baseUrl = 'https://finstra.onrender.com';
 
 interface MessageType {
   sender: string
