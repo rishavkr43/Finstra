@@ -9,7 +9,7 @@ import React, { Fragment, useEffect, useRef, useState } from 'react'
 import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
 // Use localhost during local development. Can be overridden with NEXT_PUBLIC_API_URL.
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const baseUrl = 'https://finrishi12.onrender.com';
 
 interface MessageType {
   sender: string

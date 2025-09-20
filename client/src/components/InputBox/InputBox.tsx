@@ -33,7 +33,7 @@ interface InputBoxProps {
 // type SpeechRecognitionType = any;
 
 // Use localhost during local development. Change to deployed URL for production.
-const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const baseUrl = 'https://finrishi12.onrender.com';
 
 const InputBox: React.FC<InputBoxProps> = ({ 
     chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage, handleLanguageChange, setIsLoading }) => {

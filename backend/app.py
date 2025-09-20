@@ -12,7 +12,8 @@ import serpapi
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+# allow your frontend origin(s); for testing you can use origins="*"
+CORS(app, resources={r"/api/*": {"origins": ["https://finstra.vercel.app", "http://localhost:3000"]}})
 
 # Configure Gemini API
 api_key = os.getenv('GEMINI_API_KEY')
