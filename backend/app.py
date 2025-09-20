@@ -12,8 +12,15 @@ import serpapi
 load_dotenv()
 
 app = Flask(__name__)
-# allow your frontend origin(s); for testing you can use origins="*"
-CORS(app, resources={r"/api/*": {"origins": ["https://finstra.vercel.app", "http://localhost:3000"]}})
+# Allow the deployed frontend origins (Next.js on Vercel/local) and the
+# GitHub Pages site used for the voice client. Keep this list strict in
+# production; use '*' only for short-term testing.
+allowed_origins = [
+    "https://finstra.vercel.app",
+    "http://localhost:3000",
+    "https://rishavkr43.github.io/Finstra/Frontend_vc/index.html"
+]
+CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
 # Configure Gemini API
 api_key = os.getenv('GEMINI_API_KEY')
