@@ -8,7 +8,8 @@ import { HandCoins, Plus } from 'lucide-react'
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
-const baseUrl = 'https://finstra.onrender.com';
+// Use localhost during local development. Can be overridden with NEXT_PUBLIC_API_URL.
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 interface MessageType {
   sender: string
@@ -33,6 +34,11 @@ const Page: React.FC = () => {
     // { sender: "bot", message: "That's great to hear! Is there anything you need help with or would you like to chat?", timestamp: new Date("2022-01-01T12:00:03.000Z") },
   ];
   const [chatMessages, setChatMessages] = useState<MessageType[]>(() => [...chat]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // Debug: log loading changes in dev
+  useEffect(() => {
+    console.debug('[Chat Page] isLoading =', isLoading);
+  }, [isLoading]);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([])
   const [chatInput, setChatInput] = useState<string>("");
   const [selectedLanguage, setSelectedLanguage] = useState<string>("english");
@@ -140,12 +146,21 @@ const Page: React.FC = () => {
           {chatMessages?.map((msg, index) => (
             <div key={index}>
               <div className={`flex items-start gap-4 my-2 ${msg.sender === "user" ? "text-right justify-end" : "text-left justify-start"}`}>
-                {msg.sender === "bot" &&
-                  <Avatar className='hidden md:block'>
-                    <AvatarImage src="https://i.pravatar.cc/100?img=70" alt="@shadcn" />
-                    <AvatarFallback>Kissan AI</AvatarFallback>
-                  </Avatar>
-                }
+                {msg.sender === "bot" && (
+                  <div className='flex items-center gap-2'>
+                    <Avatar className='hidden md:block'>
+                      <AvatarImage src="https://i.pravatar.cc/100?img=70" alt="@shadcn" />
+                      <AvatarFallback>Kissan AI</AvatarFallback>
+                    </Avatar>
+                    {isLoading && index === chatMessages.length - 1 && (
+                      <div className='typing-dots'>
+                        <span className='dot'></span>
+                        <span className='dot'></span>
+                        <span className='dot'></span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className='flex flex-col gap-2'>
                   <div className={`md:text-md text-sm shadow-md flex flex-col gap-y-2 max-w-[60vw] min-w-[20vw] px-6 py-4 rounded-xl ${msg.sender === "user" ? "bg-green-700 rounded-tr-none text-background" : "bg-slate-200 rounded-tl-none text-foreground"}`}>
@@ -215,6 +230,32 @@ const Page: React.FC = () => {
               <hr className='w-[80vw] my-8 mx-auto'></hr>
             </div>
           ))}
+          {/* Bot thinking placeholder shown while waiting for AI response */}
+          {isLoading && (
+            <div>
+              <div className={`flex items-start gap-4 my-2 text-left justify-start`}>
+                <div className='flex items-center gap-2'>
+                  <Avatar className='hidden md:block'>
+                    <AvatarImage src="https://i.pravatar.cc/100?img=70" alt="@shadcn" />
+                    <AvatarFallback>Kissan AI</AvatarFallback>
+                  </Avatar>
+                  <div className='typing-dots md:ml-0 ml-2'>
+                    <span className='dot'></span>
+                    <span className='dot'></span>
+                    <span className='dot'></span>
+                  </div>
+                </div>
+
+                <div className='flex flex-col gap-2'>
+                  <div className={`md:text-md text-sm shadow-md flex flex-col gap-y-2 max-w-[60vw] min-w-[20vw] px-6 py-4 rounded-xl bg-slate-200 rounded-tl-none text-foreground`}>
+                    <h2 className='font-bold'>Finstra AI</h2>
+                    <div className="whitespace-pre-wrap">Thinking...</div>
+                  </div>
+                </div>
+              </div>
+              <hr className='w-[80vw] my-8 mx-auto'></hr>
+            </div>
+          )}
           <div ref={messagesEndRef} ></div>
         </div>
       </ScrollArea>
@@ -225,6 +266,7 @@ const Page: React.FC = () => {
         setChatInput={setChatInput}
         selectedLanguage={selectedLanguage}
         handleLanguageChange={handleLanguageChange}
+        setIsLoading={setIsLoading}
       />
         {/* <div className="mb-2">
           <LanguageSelector

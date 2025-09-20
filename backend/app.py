@@ -28,8 +28,8 @@ genai.configure(api_key=api_key)
 
 # Initialize the model
 try:
-    model = genai.GenerativeModel('models/gemini-2.0-flash')
-    print(f"Successfully initialized model: models/gemini-2.0-flash")
+    model = genai.GenerativeModel('models/gemini-1.5-flash')
+    print(f"Successfully initialized model: models/gemini-1.5-flash")
 except Exception as e:
     print(f"Failed to initialize model: {str(e)}")
     raise Exception("Failed to initialize the model!")
@@ -340,14 +340,29 @@ Now, how can I help you with legitimate financial advice?
                 role = "User" if msg['sender'] == 'user' else "Assistant"
                 conversation_context += f"{role}: {msg['message']}\n"
         
-        # Prepare the prompt with language instruction and context
-        language_instruction = ""
-        if language.lower() == 'hindi':
-            language_instruction = "Please respond in Hindi using Devanagari script. Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
-        elif language.lower() == 'bengali':
-            language_instruction = "Please respond in Bengali. Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
-        
-        full_prompt = f"{SYSTEM_PROMPT}\n\nConversation History:\n{conversation_context}\n\nUser: {user_message}\n\n{language_instruction}Assistant: "
+        # Prepare the prompt with strict language instruction so the model
+        # replies only in the language selected by the user.
+        language_instructions = {
+            'english': (
+                "Please respond strictly in English. Do not use any other language or script. "
+                "Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
+            ),
+            'hindi': (
+                "Please respond strictly in Hindi using Devanagari script. Do not use any other language. "
+                "Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
+            ),
+            'bengali': (
+                "Please respond strictly in Bengali using Bengali script. Do not use any other language. "
+                "Format the response clearly with sections and bullet points. Use double newlines (\\n\\n) for paragraph breaks."
+            )
+        }
+
+        language_instruction = language_instructions.get(language.lower(), language_instructions['english'])
+
+        full_prompt = (
+            f"{SYSTEM_PROMPT}\n\nConversation History:\n{conversation_context}\n\nUser: {user_message}\n\n"
+            f"{language_instruction}\n\nAssistant: "
+        )
         
         print(f"Sending prompt to Gemini API using model: {model._model_name}")
         

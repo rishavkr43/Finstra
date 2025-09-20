@@ -27,14 +27,16 @@ interface InputBoxProps {
     setChatInput: React.Dispatch<React.SetStateAction<string>>
     selectedLanguage: string,
     handleLanguageChange: (language: string) => void
+    setIsLoading?: (v: boolean) => void
 }
 
 // type SpeechRecognitionType = any;
 
-const baseUrl = 'https://finstra-production.up.railway.app/';
+// Use localhost during local development. Change to deployed URL for production.
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const InputBox: React.FC<InputBoxProps> = ({ 
-    chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage, handleLanguageChange }) => {
+    chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage, handleLanguageChange, setIsLoading }) => {
     // const [isListening, setIsListening] = useState(false);
 
     // Voice recognition setup
@@ -133,6 +135,10 @@ const InputBox: React.FC<InputBoxProps> = ({
         //     // Regular chat flow
         // }
         try {
+            if (setIsLoading) {
+                console.debug('[InputBox] setIsLoading(true)');
+                setIsLoading(true);
+            }
             const previousMessages = chatMessages.slice(-5);
             const res: AxiosResponse = await axios.post(`${baseUrl}/api/py/chat`, {
                 message: chatInput,
@@ -149,6 +155,10 @@ const InputBox: React.FC<InputBoxProps> = ({
             };
 
             setChatMessages((prev) => [...prev, botMessage]);
+            if (setIsLoading) {
+                console.debug('[InputBox] setIsLoading(false)');
+                setIsLoading(false);
+            }
         } catch (error) {
             console.error("Error sending message:", error);
             setChatMessages((prev) => [
@@ -159,6 +169,10 @@ const InputBox: React.FC<InputBoxProps> = ({
                     timestamp: new Date()
                 }
             ]);
+            if (setIsLoading) {
+                console.debug('[InputBox] setIsLoading(false) [error path]');
+                setIsLoading(false);
+            }
         }
 
     };
