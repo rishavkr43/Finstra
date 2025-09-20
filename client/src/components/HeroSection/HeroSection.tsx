@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
                             className='cursor-pointer bg-green-700 hover:bg-green-600'
                         >Get Started</Button>
                         <Button
-                            onClick={() => window.open('http://127.0.0.1:5500/Frontend_vc/index.html', '_blank')}
+                            onClick={() => window.open('https://rishavkr43.github.io/Finstra/Frontend_vc/index.html', '_blank')}
                             // onClick={() => window.open('https://6838b1ef95a674a9b1f6b231--tubular-lolly-3dc7d3.netlify.app/', '_blank')}
                             className='cursor-pointer bg-green-700 hover:bg-green-600'
                         >Get Started with Voice Chat</Button>
