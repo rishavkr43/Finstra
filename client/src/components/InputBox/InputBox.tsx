@@ -13,101 +13,26 @@ import LanguageSelector from '../LanguageSelector/LanguageSelector';
 interface MessageType {
     sender: string
     message: string
-    timestamp: Date
+    timestamp: string
     suggestions?: string[]
     scam_detected?: boolean
 }
 
 interface InputBoxProps {
     chatMessages: MessageType[],
-    // setChatMessages: (messages: MessageType[]) => void,
     setChatMessages: React.Dispatch<React.SetStateAction<MessageType[]>>
     chatInput: string,
-    // setChatInput: (input: string) => void
     setChatInput: React.Dispatch<React.SetStateAction<string>>
     selectedLanguage: string,
     handleLanguageChange: (language: string) => void
     setIsLoading?: (v: boolean) => void
 }
 
-// type SpeechRecognitionType = any;
-
 // Use localhost during local development. Change to deployed URL for production.
-const baseUrl = 'https://finrishi12.onrender.com';
+const baseUrl = 'http://localhost:5000';
 
-const InputBox: React.FC<InputBoxProps> = ({ 
+const InputBox: React.FC<InputBoxProps> = ({
     chatMessages, setChatMessages, chatInput, setChatInput, selectedLanguage, handleLanguageChange, setIsLoading }) => {
-    // const [isListening, setIsListening] = useState(false);
-
-    // Voice recognition setup
-    // const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition as SpeechRecognitionType;
-    // const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-
-    // if (recognition) {
-    //     recognition.continuous = true;
-    //     recognition.interimResults = true;
-    //     recognition.lang = 'en-US'; // You can change this based on user preference
-    // }
-
-    // const startListening = () => {
-    //     if (!recognition) {
-    //         alert("Speech recognition is not supported in your browser.");
-    //         return;
-    //     }
-
-    //     recognition.start();
-    //     setIsListening(true);
-
-    //     recognition.onresult = (event: any) => {
-    //         const transcript = Array.from(event.results)
-    //             .map((result: any) => result[0])
-    //             .map(result => result.transcript)
-    //             .join('');
-
-    //         setChatInput(transcript);
-    //     };
-
-    //     recognition.onerror = (event: any) => {
-    //         console.error('Speech recognition error:', event.error);
-    //         setIsListening(false);
-    //     };
-
-    //     recognition.onend = () => {
-    //         setIsListening(false);
-    //     };
-    // };
-
-    // const stopListening = () => {
-    //     if (recognition) {
-    //         recognition.stop();
-    //         setIsListening(false);
-    //     }
-    // };
-
-    // const handleVoiceSearch = async (text: string) => {
-    //     try {
-    //         const response = await axios.post('http://127.0.0.1:5000/search', { text });
-
-    //         // Create bot message with response
-    //         const botMessage: MessageType = {
-    //             sender: "bot",
-    //             message: response.data.response,
-    //             timestamp: new Date()
-    //         };
-
-    //         setChatMessages((prev: MessageType[]) => [...prev, botMessage]);
-    //     } catch (error) {
-    //         console.error("Error in voice search:", error);
-    //         setChatMessages((prev: MessageType[]) => [
-    //             ...prev,
-    //             {
-    //                 sender: "bot",
-    //                 message: "Sorry, I encountered an error processing your voice input. Please try again.",
-    //                 timestamp: new Date()
-    //             }
-    //         ]);
-    //     }
-    // };
 
     const sendMessage = async () => {
         if (!chatInput.trim()) {
@@ -121,19 +46,12 @@ const InputBox: React.FC<InputBoxProps> = ({
         const userMessage = {
             sender: "user",
             message: chatInput,
-            timestamp: new Date()
+            timestamp: new Date().toISOString()
         };
 
         // Add user message
         setChatMessages((prev) => [...prev, userMessage]);
 
-        // If the message came from voice input, use voice search endpoint
-        // if (isListening) {
-        //     // await handleVoiceSearch(chatInput);
-        //     console.log('Unable to set up the voice');
-        // } else {
-        //     // Regular chat flow
-        // }
         try {
             if (setIsLoading) {
                 console.debug('[InputBox] setIsLoading(true)');
@@ -149,7 +67,7 @@ const InputBox: React.FC<InputBoxProps> = ({
             const botMessage: MessageType = {
                 sender: "bot",
                 message: res.data.response,
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 suggestions: res.data.suggestions || [],
                 scam_detected: res.data.scam_detected || false
             };
@@ -166,7 +84,7 @@ const InputBox: React.FC<InputBoxProps> = ({
                 {
                     sender: "bot",
                     message: "Sorry, I encountered an error. Please try again.",
-                    timestamp: new Date()
+                    timestamp: new Date().toISOString()
                 }
             ]);
             if (setIsLoading) {
@@ -174,7 +92,6 @@ const InputBox: React.FC<InputBoxProps> = ({
                 setIsLoading(false);
             }
         }
-
     };
 
     const getPlaceholderText = () => {
@@ -197,14 +114,8 @@ const InputBox: React.FC<InputBoxProps> = ({
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     placeholder={getPlaceholderText()}
+                    suppressHydrationWarning
                 />
-                {/* <Button
-                    onClick={isListening ? stopListening : startListening}
-                    className={`py-6 rounded-full ${isListening ? 'bg-red-500' : 'bg-blue-500 hover:bg-blue-600'} text-white mr-2`}
-                    title={isListening ? 'Stop voice input' : 'Start voice input'}
-                >
-                    {isListening ? <MicOff /> : <Mic />}
-                </Button> */}
                 <div className='flex justify-center gap-x-4 items-end'>
                     <div className="mb-2">
                         <LanguageSelector
@@ -215,6 +126,7 @@ const InputBox: React.FC<InputBoxProps> = ({
                     <Button
                         onClick={sendMessage}
                         className="bg-green-700 hover:bg-green-600 text-white py-6 px-4 rounded-full"
+                        suppressHydrationWarning
                     >
                         <Send />
                     </Button>

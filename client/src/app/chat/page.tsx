@@ -9,12 +9,12 @@ import React, { Fragment, useEffect, useRef, useState } from 'react'
 import LanguageSelector from '@/components/LanguageSelector/LanguageSelector'
 
 // Use localhost during local development. Can be overridden with NEXT_PUBLIC_API_URL.
-const baseUrl = 'https://finrishi12.onrender.com';
+const baseUrl = 'http://localhost:5000';
 
 interface MessageType {
   sender: string
   message: string
-  timestamp: Date
+  timestamp: string
   suggestions?: string[]
   scam_detected?: boolean
 }
@@ -268,7 +268,7 @@ const Page: React.FC = () => {
         handleLanguageChange={handleLanguageChange}
         setIsLoading={setIsLoading}
       />
-        {/* <div className="mb-2">
+      {/* <div className="mb-2">
           <LanguageSelector
             selectedLanguage={selectedLanguage}
             onLanguageChange={handleLanguageChange}

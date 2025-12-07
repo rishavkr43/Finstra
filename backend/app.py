@@ -36,8 +36,8 @@ genai.configure(api_key=api_key)
 
 # Initialize the model
 try:
-    model = genai.GenerativeModel('models/gemini-1.5-flash')
-    print(f"Successfully initialized model: models/gemini-1.5-flash")
+    model = genai.GenerativeModel('models/gemini-2.5-flash-lite')
+    print(f"Successfully initialized model: models/gemini-2.5-flash-lite")
 except Exception as e:
     print(f"Failed to initialize model: {str(e)}")
     raise Exception("Failed to initialize the model!")
@@ -257,7 +257,7 @@ def voice_search():
             )
 
         try:
-            model = genai.GenerativeModel('gemini-2.0-flash')
+            model = genai.GenerativeModel('models/gemini-2.5-flash-lite')
             response = model.generate_content(prompt)
             
             if response.text:
